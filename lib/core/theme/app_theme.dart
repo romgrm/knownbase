@@ -26,11 +26,11 @@ class AppTheme {
       brightness: Brightness.light,
       fontFamily: KFonts.fontFamily,
       colorScheme: const ColorScheme.light(
-        primary: lightSecondaryColor,
-        secondary: purple,
+        primary: lightPrimaryColor,
+        secondary: lightSecondaryColor,
         surface: lightPrimaryColor,
         onPrimary: white,
-        onSecondary: white,
+        onSecondary: purple,
         onSurface: black,
         error: red,
         onError: black,
@@ -46,18 +46,18 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: lightSecondaryColor.withOpacity(0.8),
+        fillColor: lightPrimaryColor.withOpacity(0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: white, width: 1),
+          borderSide:  BorderSide(color: lightPrimaryColor.withOpacity(0.1), width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: white, width: 1),
+          borderSide:  BorderSide(color: lightPrimaryColor.withOpacity(0.1), width: 1),
         ),
-        focusedBorder: OutlineInputBorder(
+        errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: white, width: 2),
+          borderSide:  BorderSide(color: red.withOpacity(0.5), width: 2),
         ),
         labelStyle: const TextStyle(color: white),
         hintStyle: TextStyle(color: white.withOpacity(0.7)),
@@ -83,20 +83,20 @@ class AppTheme {
         ),
       ),
       textTheme: TextTheme(
-        displayLarge: KFonts.displayLarge.copyWith(color: white),
-        displayMedium: KFonts.displayMedium.copyWith(color: white),
-        headlineLarge: KFonts.headlineLarge.copyWith(color: white),
-        headlineMedium: KFonts.headlineMedium.copyWith(color: white),
-        headlineSmall: KFonts.headlineSmall.copyWith(color: white),
-        titleLarge: KFonts.titleLarge.copyWith(color: white),
-        titleMedium: KFonts.titleMedium.copyWith(color: white),
-        titleSmall: KFonts.titleSmall.copyWith(color: white),
-        bodyLarge: KFonts.bodyLarge.copyWith(color: white),
-        bodyMedium: KFonts.bodyMedium.copyWith(color: white),
-        bodySmall: KFonts.bodySmall.copyWith(color: white),
+        displayLarge: KFonts.displayLarge.copyWith(color: lightPrimaryColor),
+        displayMedium: KFonts.displayMedium.copyWith(color: lightPrimaryColor),
+        headlineLarge: KFonts.headlineLarge.copyWith(color: lightPrimaryColor),
+        headlineMedium: KFonts.headlineMedium.copyWith(color: lightPrimaryColor),
+        headlineSmall: KFonts.headlineSmall.copyWith(color: lightPrimaryColor),
+        titleLarge: KFonts.titleLarge.copyWith(color: lightPrimaryColor),
+        titleMedium: KFonts.titleMedium.copyWith(color: lightPrimaryColor),
+        titleSmall: KFonts.titleSmall.copyWith(color: lightPrimaryColor),
+        bodyLarge: KFonts.bodyLarge.copyWith(color: lightPrimaryColor),
+        bodyMedium: KFonts.bodyMedium.copyWith(color: lightPrimaryColor),
+        bodySmall: KFonts.bodySmall.copyWith(color: lightPrimaryColor),
         labelLarge: KFonts.labelLarge.copyWith(color: lightSecondaryColor),
-        labelMedium: KFonts.labelMedium.copyWith(color: white),
-        labelSmall: KFonts.labelSmall.copyWith(color: white),
+        labelMedium: KFonts.labelMedium.copyWith(color: lightSecondaryColor),
+        labelSmall: KFonts.labelSmall.copyWith(color: lightSecondaryColor),
       ),
     );
   }
@@ -108,8 +108,8 @@ class AppTheme {
       brightness: Brightness.dark,
       fontFamily: KFonts.fontFamily,
       colorScheme: const ColorScheme.dark(
-        primary: darkSecondaryColor,
-        secondary: purple,
+        primary: darkPrimaryColor,
+        secondary: darkSecondaryColor,
         surface: darkPrimaryColor,
         onPrimary: white,
         onSecondary: white,
@@ -189,10 +189,7 @@ class AppTheme {
 extension ThemeExtension on BuildContext {
   ThemeData get theme => Theme.of(this);
   TextTheme get textTheme => Theme.of(this).textTheme;
-  // FlexAppColorScheme get colors =>
-  //     Theme.of(this).extension<FlexAppColorScheme>()!;
-
-  // additional helpful getters
+    ColorScheme get colorScheme => Theme.of(this).colorScheme; 
 
   Size get deviceSize => MediaQuery.sizeOf(this);
   double get screenWidth => deviceSize.width;

@@ -20,7 +20,7 @@ class ActionButton extends StatelessWidget {
     this.isTransparent = false,
     this.isLoading = false,
     this.width,
-    this.height = 48,
+    this.height = KSize.xxxl,
   });
 
   @override
@@ -44,14 +44,14 @@ class ActionButton extends StatelessWidget {
           onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(KSize.radiusDefault),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: KSize.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (isLoading)
                   const SizedBox(
-                    width: 20,
-                    height: 20,
+                    width: KSize.md,
+                    height: KSize.md,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -64,7 +64,7 @@ class ActionButton extends StatelessWidget {
                       color: Colors.white,
                       size: 20,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: KSize.sm),
                   ],
                 ],
                 Text(

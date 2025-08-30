@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/theme_provider.dart';
+import 'package:knownbase/shared/input_fields/input_field.dart';
+import '../../../../core/constants/k_sizes.dart';
+import '../../../../core/constants/k_fonts.dart';
 import '../../application/authentication_cubit.dart';
 import '../../application/authentication_state.dart';
 
@@ -47,14 +49,17 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
         return Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildEmailField(state),
-              const SizedBox(height: 16),
+              const SizedBox(height: KSize.md),
               _buildPasswordField(state),
-              const SizedBox(height: 24),
+              const SizedBox(height: KSize.lg),
               _buildSubmitButton(state),
-              const SizedBox(height: 16),
-              _buildErrorMessages(state),
+              if (state.hasSignInError || state.hasSignUpError) ...[
+                const SizedBox(height: KSize.md),
+                _buildErrorMessages(state),
+              ],
             ],
           ),
         );
@@ -63,73 +68,52 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
   }
 
   Widget _buildEmailField(AuthenticationState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Email',
-          style: context.textTheme.bodyLarge,
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'Enter your email',
-          ),
-          enabled: !state.isSignInLoading && !state.isSignUpLoading,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your email';
-            }
-            if (!state.credentials.isEmailValid) {
-              return 'Please enter a valid email address';
-            }
-            return null;
-          },
-        ),
-      ],
+    return InputField(
+      controller: _emailController,
+      label: 'Email',
+      keyboardType: TextInputType.emailAddress,
+      hintText: 'Enter your email',
+      enabled: !state.isSignInLoading && !state.isSignUpLoading,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        }
+        if (!state.credentials.isEmailValid) {
+          return 'Please enter a valid email address';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildPasswordField(AuthenticationState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Password',
-          style: context.textTheme.bodyLarge,
+    return InputField(
+      controller: _passwordController,
+      label: 'Password',
+      obscureText: _obscurePassword,
+      hintText: 'Enter your password',
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+          color: Colors.white.withOpacity(0.7),
+          size: KSize.iconSizeDefault,
         ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          decoration: InputDecoration(
-            hintText: 'Enter your password',
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-          ),
-          enabled: !state.isSignInLoading && !state.isSignUpLoading,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your password';
-            }
-            if (!state.credentials.isPasswordValid) {
-              return 'Password must be at least 6 characters';
-            }
-            return null;
-          },
-        ),
-      ],
+        onPressed: () {
+          setState(() {
+            _obscurePassword = !_obscurePassword;
+          });
+        },
+      ),
+      enabled: !state.isSignInLoading && !state.isSignUpLoading,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        if (!state.credentials.isPasswordValid) {
+          return 'Password must be at least 6 characters';
+        }
+        return null;
+      },
     );
   }
 
@@ -137,24 +121,36 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
     final isLoading = state.isSignInLoading || state.isSignUpLoading;
     final buttonText = state.isSignInMode ? 'Sign In' : 'Sign Up';
 
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : _onSubmit,
-        child: isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Text(
-                buttonText,
-                style: context.textTheme.labelLarge,
-              ),
+    return Container(
+      height: KSize.buttonHeightDefault,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6.75),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : _onSubmit,
+          borderRadius: BorderRadius.circular(6.75),
+          child: Center(
+            child: isLoading
+                ? const SizedBox(
+                    height: KSize.md,
+                    width: KSize.md,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA199FA)),
+                    ),
+                  )
+                : Text(
+                    buttonText,
+                    style: KFonts.labelMedium.copyWith(
+                      color: const Color(0xFFA199FA),
+                      fontWeight: KFonts.semiBold,
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }
@@ -176,27 +172,29 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
       children: errors.map((error) {
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(KSize.xs),
+          margin: const EdgeInsets.only(bottom: KSize.xxs),
           decoration: BoxDecoration(
-            color: context.colorScheme.error,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: context.colorScheme.error),
+            color: Colors.red.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(6.75),
+            border: Border.all(
+              color: Colors.red.withOpacity(0.5),
+              width: 1,
+            ),
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
-                color: context.colorScheme.onError,
-                size: 20,
+                color: Colors.white,
+                size: KSize.md,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: KSize.xxs),
               Expanded(
                 child: Text(
                   error,
-                  style: TextStyle(
-                    color: context.colorScheme.onError,
-                    fontSize: 14,
+                  style: KFonts.bodySmall.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               ),

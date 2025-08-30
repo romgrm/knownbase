@@ -22,7 +22,7 @@ class SocialSignInButton extends StatelessWidget {
       height: KSize.buttonHeightDefault,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6.75),
+        borderRadius: BorderRadius.circular(KSize.radiusDefault),
         border: Border.all(
           color: Colors.white.withOpacity(0.2),
           width: 1,
@@ -32,7 +32,7 @@ class SocialSignInButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: isLoading ? null : onPressed,
-          borderRadius: BorderRadius.circular(6.75),
+          borderRadius: BorderRadius.circular(KSize.radiusDefault),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: KSize.sm),
             child: Row(

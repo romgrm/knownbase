@@ -46,6 +46,9 @@ dependencies:
   
   # Form validation
   form_validator: ^2.1.1
+  
+  # Routing
+  go_router: ^14.2.7
 
 dev_dependencies:
   flutter_test:

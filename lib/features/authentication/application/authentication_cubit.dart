@@ -73,6 +73,24 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     ));
 
     try {
+      // Mock authentication - always successful for demo purposes
+      // TODO: Replace with actual authentication service call
+      // await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      
+      // // Simulate successful authentication
+      // final mockUser = {
+      //   'id': 'mock-user-id',
+      //   'email': state.credentials.email,
+      //   'created_at': DateTime.now().toIso8601String(),
+      // };
+      
+      // emit(state.copyWith(
+      //   signInState: DataState.success(mockUser),
+      //   isAuthenticatedState: const DataState.success(true),
+      //   currentUserState: DataState.success(mockUser),
+      // ));
+      
+      // Uncomment below for real authentication
       final result = await _service.signIn(state.credentials);
       if (result.isSuccess) {
         emit(state.copyWith(

@@ -13,10 +13,7 @@ class AuthenticationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthenticationCubit()..initialize(),
-      child: const AuthenticationView(),
-    );
+    return const AuthenticationView();
   }
 }
 
@@ -26,28 +23,53 @@ class AuthenticationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: BlocBuilder<AuthenticationCubit, AuthenticationState>(
-          builder: (context, state) {
-            if (state.isCheckingAuthentication) {
-              return const Center(
-                child: CircularProgressIndicator(),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'KnownBase',
+          style: KFonts.titleLarge.copyWith(
+            color: Colors.black,
+            fontWeight: KFonts.bold,
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.grey[50]!,
+              Colors.grey[100]!,
+              Colors.grey[200]!,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: BlocBuilder<AuthenticationCubit, AuthenticationState>(
+            builder: (context, state) {
+              if (state.isCheckingAuthentication) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (state.isAuthenticated) {
+                return _buildAuthenticatedView(context, state);
+              }
+
+              return Center(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  margin: const EdgeInsets.all(KSize.lg),
+                  child: _buildAuthenticationModal(context, state),
+                ),
               );
-            }
-
-            if (state.isAuthenticated) {
-              return _buildAuthenticatedView(context, state);
-            }
-
-            return Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                margin: const EdgeInsets.all(KSize.lg),
-                child: _buildAuthenticationModal(context, state),
-              ),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -99,7 +121,7 @@ class AuthenticationView extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: const Color(0xFFA199FA),
-        borderRadius: BorderRadius.circular(21),
+        borderRadius: BorderRadius.circular(KSize.radiusXLarge),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),

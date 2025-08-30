@@ -44,7 +44,7 @@ class InputField extends StatelessWidget {
           height: KSize.buttonHeightDefault,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6.75),
+            borderRadius: BorderRadius.circular(KSize.radiusDefault),
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
               width: 1,

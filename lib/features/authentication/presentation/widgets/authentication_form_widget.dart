@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:knownbase/shared/input_fields/input_field.dart';
 import '../../../../core/constants/k_sizes.dart';
 import '../../../../core/constants/k_fonts.dart';
+import '../../../../core/router/app_router.dart';
 import '../../application/authentication_cubit.dart';
 import '../../application/authentication_state.dart';
 
@@ -44,26 +45,34 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
-      builder: (context, state) {
-        return Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildEmailField(state),
-              const SizedBox(height: KSize.md),
-              _buildPasswordField(state),
-              const SizedBox(height: KSize.lg),
-              _buildSubmitButton(state),
-              if (state.hasSignInError || state.hasSignUpError) ...[
-                const SizedBox(height: KSize.md),
-                _buildErrorMessages(state),
-              ],
-            ],
-          ),
-        );
+    return BlocListener<AuthenticationCubit, AuthenticationState>(
+      listener: (context, state) {
+        // Navigate to dashboard when sign-in or sign-up is successful
+        if (state.isSignInSuccess || state.isSignUpSuccess) {
+          AppRouter.navigateToDashboard(context);
+        }
       },
+      child: BlocBuilder<AuthenticationCubit, AuthenticationState>(
+        builder: (context, state) {
+          return Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildEmailField(state),
+                const SizedBox(height: KSize.md),
+                _buildPasswordField(state),
+                const SizedBox(height: KSize.lg),
+                _buildSubmitButton(state),
+                if (state.hasSignInError || state.hasSignUpError) ...[
+                  const SizedBox(height: KSize.md),
+                  _buildErrorMessages(state),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -125,13 +134,13 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
       height: KSize.buttonHeightDefault,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(6.75),
+        borderRadius: BorderRadius.circular(KSize.radiusDefault),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: isLoading ? null : _onSubmit,
-          borderRadius: BorderRadius.circular(6.75),
+          borderRadius: BorderRadius.circular(KSize.radiusDefault),
           child: Center(
             child: isLoading
                 ? const SizedBox(
@@ -176,7 +185,7 @@ class _AuthenticationFormWidgetState extends State<AuthenticationFormWidget> {
           margin: const EdgeInsets.only(bottom: KSize.xxs),
           decoration: BoxDecoration(
             color: Colors.red.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(6.75),
+            borderRadius: BorderRadius.circular(KSize.radiusDefault),
             border: Border.all(
               color: Colors.red.withOpacity(0.5),
               width: 1,

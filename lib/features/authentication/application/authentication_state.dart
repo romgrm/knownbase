@@ -9,6 +9,8 @@ class AuthenticationState {
     required this.signOutState,
     required this.currentUserState,
     required this.isAuthenticatedState,
+    required this.passwordResetState,
+    required this.sessionRefreshState,
     required this.credentials,
     this.isSignInMode = true,
   });
@@ -18,6 +20,8 @@ class AuthenticationState {
   final DataState<void> signOutState;
   final DataState<Map<String, dynamic>> currentUserState;
   final DataState<bool> isAuthenticatedState;
+  final DataState<void> passwordResetState;
+  final DataState<Map<String, dynamic>> sessionRefreshState;
   final AuthenticationModel credentials;
   final bool isSignInMode;
 
@@ -47,6 +51,16 @@ class AuthenticationState {
   bool get isAuthenticationCheckSuccess => isAuthenticatedState.isSuccess;
   bool get isAuthenticationCheckIdle => isAuthenticatedState.isIdle;
 
+  bool get isPasswordResetLoading => passwordResetState.isLoading;
+  bool get hasPasswordResetError => passwordResetState.hasError;
+  bool get isPasswordResetSuccess => passwordResetState.isSuccess;
+  bool get isPasswordResetIdle => passwordResetState.isIdle;
+
+  bool get isSessionRefreshLoading => sessionRefreshState.isLoading;
+  bool get hasSessionRefreshError => sessionRefreshState.hasError;
+  bool get isSessionRefreshSuccess => sessionRefreshState.isSuccess;
+  bool get isSessionRefreshIdle => sessionRefreshState.isIdle;
+
   /// Get current user data if available
   Map<String, dynamic>? get currentUser => currentUserState.data;
 
@@ -63,6 +77,8 @@ class AuthenticationState {
     DataState<void>? signOutState,
     DataState<Map<String, dynamic>>? currentUserState,
     DataState<bool>? isAuthenticatedState,
+    DataState<void>? passwordResetState,
+    DataState<Map<String, dynamic>>? sessionRefreshState,
     AuthenticationModel? credentials,
     bool? isSignInMode,
   }) {
@@ -72,6 +88,8 @@ class AuthenticationState {
       signOutState: signOutState ?? this.signOutState,
       currentUserState: currentUserState ?? this.currentUserState,
       isAuthenticatedState: isAuthenticatedState ?? this.isAuthenticatedState,
+      passwordResetState: passwordResetState ?? this.passwordResetState,
+      sessionRefreshState: sessionRefreshState ?? this.sessionRefreshState,
       credentials: credentials ?? this.credentials,
       isSignInMode: isSignInMode ?? this.isSignInMode,
     );
@@ -84,6 +102,8 @@ class AuthenticationState {
     signOutState: DataState.idle(),
     currentUserState: DataState.idle(),
     isAuthenticatedState: DataState.idle(),
+    passwordResetState: DataState.idle(),
+    sessionRefreshState: DataState.idle(),
     credentials: AuthenticationModel(),
     isSignInMode: true,
   );

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/k_fonts.dart';
 import '../../../core/constants/k_sizes.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/services/app_logger.dart';
 import '../../authentication/application/authentication_cubit.dart';
 import '../../authentication/application/authentication_state.dart';
 
@@ -57,6 +58,7 @@ class DashboardScreen extends StatelessWidget {
             listener: (context, state) {
               // Navigate to authentication when sign-out is successful
               if (state.isSignOutSuccess) {
+                AppLogger.navigationTo('Authentication');
                 AppRouter.navigateToAuth(context);
               }
             },

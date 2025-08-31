@@ -20,6 +20,15 @@ sealed class AuthenticationError {
   /// User already exists
   const factory AuthenticationError.userAlreadyExists() = _UserAlreadyExists;
 
+  /// Password reset failed
+  const factory AuthenticationError.passwordResetFailed() = _PasswordResetFailed;
+
+  /// Token storage error
+  const factory AuthenticationError.tokenStorageError() = _TokenStorageError;
+
+  /// Session expired
+  const factory AuthenticationError.sessionExpired() = _SessionExpired;
+
   /// Unknown error
   const factory AuthenticationError.unknown(String? message) = _Unknown;
 
@@ -31,6 +40,9 @@ sealed class AuthenticationError {
     _NetworkError() => 'Network error. Please check your connection',
     _UserNotFound() => 'User not found',
     _UserAlreadyExists() => 'User already exists with this email',
+    _PasswordResetFailed() => 'Failed to send password reset email',
+    _TokenStorageError() => 'Failed to store authentication data securely',
+    _SessionExpired() => 'Your session has expired. Please sign in again',
     _Unknown() => 'An unknown error occurred',
   };
 }
@@ -57,6 +69,18 @@ class _UserNotFound extends AuthenticationError {
 
 class _UserAlreadyExists extends AuthenticationError {
   const _UserAlreadyExists() : super._();
+}
+
+class _PasswordResetFailed extends AuthenticationError {
+  const _PasswordResetFailed() : super._();
+}
+
+class _TokenStorageError extends AuthenticationError {
+  const _TokenStorageError() : super._();
+}
+
+class _SessionExpired extends AuthenticationError {
+  const _SessionExpired() : super._();
 }
 
 class _Unknown extends AuthenticationError {

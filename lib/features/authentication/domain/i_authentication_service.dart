@@ -37,4 +37,28 @@ abstract class IAuthenticationService {
   /// Returns [Result.success] with true if authenticated, false otherwise.
   /// Returns [Result.failure] with [AuthenticationError] if check fails.
   Future<Result<bool, AuthenticationError>> isAuthenticated();
+
+  /// Sends a password reset email to the specified email address
+  /// 
+  /// Returns [Result.success] on successful email send.
+  /// Returns [Result.failure] with [AuthenticationError] if reset fails.
+  Future<Result<void, AuthenticationError>> resetPassword(String email);
+
+  /// Refreshes the current user session
+  /// 
+  /// Returns [Result.success] with updated user data on successful refresh.
+  /// Returns [Result.failure] with [AuthenticationError] if refresh fails.
+  Future<Result<Map<String, dynamic>, AuthenticationError>> refreshSession();
+
+  /// Stores authentication tokens securely
+  /// 
+  /// Returns [Result.success] on successful storage.
+  /// Returns [Result.failure] with [AuthenticationError] if storage fails.
+  Future<Result<void, AuthenticationError>> storeTokens(String accessToken, String refreshToken);
+
+  /// Clears stored authentication tokens
+  /// 
+  /// Returns [Result.success] on successful clear.
+  /// Returns [Result.failure] with [AuthenticationError] if clear fails.
+  Future<Result<void, AuthenticationError>> clearTokens();
 }

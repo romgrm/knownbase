@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:knownbase/core/constants/k_fonts.dart';
 import '../../../core/constants/k_sizes.dart';
+import '../../../core/router/app_router.dart';
+import '../../../core/services/app_logger.dart';
 import '../../../shared/buttons/social_sign_in_button.dart';
 import '../application/authentication_cubit.dart';
 import '../application/authentication_state.dart';
 import 'widgets/authentication_form_widget.dart';
+import 'widgets/password_reset_widget.dart';
 
 /// Main authentication screen that handles both sign in and sign up
 class AuthenticationScreen extends StatelessWidget {
@@ -49,70 +52,40 @@ class AuthenticationView extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: BlocBuilder<AuthenticationCubit, AuthenticationState>(
-            builder: (context, state) {
-              if (state.isCheckingAuthentication) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+          child: BlocListener<AuthenticationCubit, AuthenticationState>(
+            listener: (context, state) {
+              // Navigate to dashboard when authentication is successful
+              if (state.isAuthenticated && !state.isCheckingAuthentication) {
+                AppLogger.navigationTo('Dashboard');
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  AppRouter.navigateToDashboard(context);
+                });
               }
-
-              if (state.isAuthenticated) {
-                return _buildAuthenticatedView(context, state);
-              }
-
-              return Center(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  margin: const EdgeInsets.all(KSize.lg),
-                  child: _buildAuthenticationModal(context, state),
-                ),
-              );
             },
+            child: BlocBuilder<AuthenticationCubit, AuthenticationState>(
+              builder: (context, state) {
+                if (state.isCheckingAuthentication) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                // Show authentication form when not authenticated
+                return Center(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    margin: const EdgeInsets.all(KSize.lg),
+                    child: _buildAuthenticationModal(context, state),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAuthenticatedView(BuildContext context, AuthenticationState state) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.check_circle,
-          size: KSize.iconSizeXLarge,
-          color: Colors.green,
-        ),
-        const SizedBox(height: KSize.md),
-        Text(
-          'Welcome!',
-          style: KFonts.headlineMedium.copyWith(color: Colors.black),
-        ),
-        const SizedBox(height: KSize.sm),
-        if (state.currentUser != null) ...[
-          Text(
-            'Signed in as: ${state.currentUser!['email'] ?? 'Unknown'}',
-            style: KFonts.bodyMedium.copyWith(color: Colors.grey[600]),
-          ),
-          const SizedBox(height: KSize.md),
-        ],
-        Container(
-          width: double.infinity,
-          height: KSize.buttonHeightDefault,
-          margin: const EdgeInsets.symmetric(horizontal: KSize.xl),
-          child: ElevatedButton(
-            onPressed: () => context.read<AuthenticationCubit>().signOut(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Sign Out'),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildAuthenticationModal(BuildContext context, AuthenticationState state) {
     return Container(
@@ -240,7 +213,7 @@ class AuthenticationView extends StatelessWidget {
                   Center(
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Implement forgot password
+                        _showPasswordResetDialog(context);
                       },
                       child: Text(
                         'Forgot password?',
@@ -292,6 +265,30 @@ class AuthenticationView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showPasswordResetDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            margin: const EdgeInsets.all(KSize.lg),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(KSize.radiusMedium),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(KSize.lg),
+              child: PasswordResetWidget(),
+            ),
+          ),
+        );
+      },
     );
   }
 }

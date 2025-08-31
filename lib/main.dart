@@ -4,17 +4,23 @@ import 'core/providers/app_bloc_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/services/dependency_injection.dart';
 import 'core/services/supabase_config.dart';
+import 'core/services/app_logger.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  AppLogger.appStarted();
+  
   // Initialize Supabase
+  AppLogger.info('Initializing Supabase...');
   await SupabaseConfig.initialize();
   
   // Setup dependency injection
+  AppLogger.info('Setting up dependency injection...');
   await setupDependencies();
   
+  AppLogger.info('KnownBase app initialized successfully');
   runApp(const MyApp());
 }
 

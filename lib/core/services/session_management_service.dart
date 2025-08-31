@@ -25,6 +25,7 @@ class SupabaseSessionManagementService implements ISessionManagementService {
   })  : _supabase = supabase ?? Supabase.instance.client,
         _tokenStorage = tokenStorage ?? SecureTokenStorageService();
 
+  /// Be notified when the auth state changes (signed in, signed out, session expired, etc.)
   @override
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 

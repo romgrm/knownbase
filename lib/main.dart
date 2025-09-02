@@ -37,6 +37,8 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         routerConfig: AppRouter.router,
+        // Using our custom responsive system that doesn't need external framework
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

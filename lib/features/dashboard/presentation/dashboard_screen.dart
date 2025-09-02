@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:knownbase/shared/app_bar/app_bar.dart';
 import '../../../core/constants/k_fonts.dart';
 import '../../../core/constants/k_sizes.dart';
 import '../../../core/router/app_router.dart';
@@ -15,32 +16,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'KnownBase',
-          style: KFonts.titleLarge.copyWith(
-            color: Colors.black,
-            fontWeight: KFonts.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Show sign out confirmation
-              _showSignOutDialog(context);
-            },
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.black,
-            ),
-            tooltip: 'Sign Out',
-          ),
-          const SizedBox(width: KSize.sm),
-        ],
-      ),
+      appBar: KnownBaseAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

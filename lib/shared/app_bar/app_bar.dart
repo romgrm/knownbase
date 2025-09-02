@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/constants/k_sizes.dart';
 import '../../core/constants/k_fonts.dart';
 
-//TODO: - Implement business logic 
-// TODO: - Check responsiveness design 
+//TODO: - Implement business logic
+// TODO: - Check responsiveness design
 class KnownBaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   const KnownBaseAppBar({
     super.key,

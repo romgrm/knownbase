@@ -12,6 +12,7 @@ class InputField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final String? label;
+  final int maxLines;
 
   const InputField({
     super.key, 
@@ -24,10 +25,14 @@ class InputField extends StatelessWidget {
     this.obscureText = false, 
     this.suffixIcon,
     this.label,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,18 +40,24 @@ class InputField extends StatelessWidget {
           Text(
             label!,
             style: KFonts.labelMedium.copyWith(
-              color: Colors.white,
+              color: isDark ? Colors.white : theme.textTheme.labelLarge?.color,
             ),
           ),
           const SizedBox(height: KSize.xxs),
         ],
         Container(
-          height: KSize.buttonHeightDefault,
+          constraints: maxLines > 1 
+              ? BoxConstraints(minHeight: KSize.buttonHeightDefault * maxLines * 0.6)
+              : const BoxConstraints(minHeight: KSize.buttonHeightDefault),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: isDark 
+                ? Colors.white.withOpacity(0.05)
+                : const Color(0xFFF5F5F7),
             borderRadius: BorderRadius.circular(KSize.radiusDefault),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: isDark 
+                  ? Colors.white.withOpacity(0.1)
+                  : const Color(0xFFE5E5E7),
               width: 1,
             ),
           ),
@@ -56,15 +67,18 @@ class InputField extends StatelessWidget {
             obscureText: obscureText,
             enabled: enabled,
             validator: validator,
+            maxLines: maxLines,
             style: KFonts.bodyMedium.copyWith(
-              color: Colors.white,
+              color: isDark ? Colors.white : Colors.black87,
             ),
             decoration: InputDecoration(
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
               hintText: hintText,
-              hintStyle: KFonts.bodySmall.copyWith(
-                color: Colors.white.withOpacity(0.5),
+              hintStyle: KFonts.bodyMedium.copyWith(
+                color: isDark 
+                    ? Colors.white.withOpacity(0.5)
+                    : Colors.black54,
               ),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -72,7 +86,7 @@ class InputField extends StatelessWidget {
               errorBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: KSize.xs,
+                horizontal: KSize.sm,
                 vertical: KSize.sm,
               ),
             ),

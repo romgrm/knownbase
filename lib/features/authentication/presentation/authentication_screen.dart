@@ -58,7 +58,7 @@ class AuthenticationView extends StatelessWidget {
               if (state.isAuthenticated && !state.isCheckingAuthentication) {
                 AppLogger.navigationTo('Dashboard');
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  AppRouter.navigateToDashboard(context);
+                  AppRouter.navigateToProjectSelection(context);
                 });
               }
             },

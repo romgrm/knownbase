@@ -86,9 +86,9 @@ class _PasswordResetWidgetState extends State<PasswordResetWidget> {
                 ),
               ],
               if (state.isPasswordResetSuccess) ...[
-                SizedBox(height: KSize.sm),
+                const SizedBox(height: KSize.sm),
                 Container(
-                  padding: EdgeInsets.all(KSize.sm),
+                  padding: const EdgeInsets.all(KSize.sm),
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(KSize.radiusDefault),
@@ -97,7 +97,7 @@ class _PasswordResetWidgetState extends State<PasswordResetWidget> {
                   child: Row(
                     children: [
                       const Icon(Icons.check_circle_outline, color: Colors.green, size: 20),
-                      SizedBox(width: KSize.xs),
+                      const SizedBox(width: KSize.xs),
                       Expanded(
                         child: Text(
                           'Password reset email sent! Check your inbox.',
@@ -108,7 +108,7 @@ class _PasswordResetWidgetState extends State<PasswordResetWidget> {
                   ),
                 ),
               ],
-              SizedBox(height: KSize.xl),
+              const SizedBox(height: KSize.xl),
               ElevatedButton(
                 onPressed: state.isPasswordResetLoading
                     ? null
@@ -120,7 +120,7 @@ class _PasswordResetWidgetState extends State<PasswordResetWidget> {
                         }
                       },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, KSize.buttonHeightDefault),
+                  minimumSize: const Size(double.infinity, KSize.buttonHeightDefault),
                 ),
                 child: state.isPasswordResetLoading
                     ? const SizedBox(
@@ -130,7 +130,7 @@ class _PasswordResetWidgetState extends State<PasswordResetWidget> {
                       )
                     : Text('Send Reset Email', style: KFonts.buttonLarge),
               ),
-              SizedBox(height: KSize.lg),
+              const SizedBox(height: KSize.lg),
               TextButton(
                 onPressed: () {
                   context.read<AuthenticationCubit>().clearPasswordResetState();

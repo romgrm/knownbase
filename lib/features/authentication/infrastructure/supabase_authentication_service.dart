@@ -5,6 +5,8 @@ import '../../../core/services/app_logger.dart';
 import '../domain/i_authentication_service.dart';
 import '../domain/authentication_model.dart';
 import '../domain/authentication_error.dart';
+import '../domain/user_model.dart';
+import 'user_dto.dart';
 
 /// Supabase implementation of the authentication service
 class SupabaseAuthenticationService implements IAuthenticationService {
@@ -70,10 +72,20 @@ class SupabaseAuthenticationService implements IAuthenticationService {
         await _storeSessionTokens(response.session!);
         AppLogger.tokensStored();
         
+        // Create user profile in public.users table
+        final userProfileResult = await _createUserProfile(response.user!);
+        if (userProfileResult.isFailure) {
+          AppLogger.authError('USER_PROFILE_CREATION', 'Failed to create user profile', credentials.email);
+          // Note: User is created in auth.users but profile creation failed
+          // We could handle this differently based on requirements
+        }
+        
         AppLogger.authSuccess('SIGN_UP', credentials.email);
         return Result.success({
           'id': response.user!.id,
           'email': response.user!.email,
+          'name': userProfileResult.isSuccess ? userProfileResult.data!.name : '',
+          'initials': userProfileResult.isSuccess ? userProfileResult.data!.initials : null,
           'created_at': response.user!.createdAt.toString(),
         });
       } else {
@@ -223,6 +235,52 @@ class SupabaseAuthenticationService implements IAuthenticationService {
     if (session.accessToken.isNotEmpty && session.refreshToken != null) {
       await _tokenStorage.storeAccessToken(session.accessToken);
       await _tokenStorage.storeRefreshToken(session.refreshToken!);
+    }
+  }
+
+  /// Helper method to create user profile in public.users table
+  Future<Result<UserModel, AuthenticationError>> _createUserProfile(User authUser) async {
+    try {
+      // Extract name from email (part before @)
+      final emailName = authUser.email?.split('@').first ?? '';
+      final displayName = emailName.isNotEmpty ? emailName : 'User';
+      
+      // Generate initials from display name
+      final initials = _generateInitials(displayName);
+      
+      final userDto = UserDto(
+        id: authUser.id,
+        email: authUser.email ?? '',
+        name: displayName,
+        initials: initials,
+        createdAt: DateTime.tryParse(authUser.createdAt.toString()),
+      );
+
+      final response = await _supabase
+          .from('users')
+          .insert(userDto.toJson())
+          .select()
+          .single();
+
+      final createdUserDto = UserDto.fromJson(response);
+      return Result.success(createdUserDto.toDomain());
+    } catch (e) {
+      AppLogger.authError('USER_PROFILE_CREATION', e.toString(), authUser.email);
+      return const Result.failure(AuthenticationError.networkError());
+    }
+  }
+
+  /// Helper method to generate initials from a name
+  String _generateInitials(String name) {
+    if (name.isEmpty) return '';
+    
+    final words = name.trim().split(RegExp(r'\s+'));
+    if (words.isEmpty) return '';
+    
+    if (words.length == 1) {
+      return words.first.substring(0, 1).toUpperCase();
+    } else {
+      return (words.first.substring(0, 1) + words.last.substring(0, 1)).toUpperCase();
     }
   }
 

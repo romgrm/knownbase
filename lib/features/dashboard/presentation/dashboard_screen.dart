@@ -44,50 +44,6 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
-  void _showSignOutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Sign Out',
-            style: KFonts.titleMedium,
-          ),
-          content: Text(
-            'Are you sure you want to sign out?',
-            style: KFonts.bodyMedium,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(KSize.radiusMedium),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Cancel',
-                style: KFonts.labelMedium.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.read<AuthenticationCubit>().signOut();
-              },
-              child: Text(
-                'Sign Out',
-                style: KFonts.labelMedium.copyWith(
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 class DashboardView extends StatelessWidget {

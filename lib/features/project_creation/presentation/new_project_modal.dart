@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:knownbase/core/theme/app_theme.dart';
 import '../../../core/constants/k_sizes.dart';
 import '../../../core/constants/k_fonts.dart';
 import '../../../shared/cards/k_card.dart';
@@ -15,13 +14,12 @@ class NewProjectModal extends StatefulWidget {
 class _NewProjectModalState extends State<NewProjectModal> {
   final _formKey = GlobalKey<FormState>();
   final _projectNameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  String _selectedPrivacy = 'team';
+  final _slugController = TextEditingController();
 
   @override
   void dispose() {
     _projectNameController.dispose();
-    _descriptionController.dispose();
+    _slugController.dispose();
     super.dispose();
   }
 
@@ -30,8 +28,7 @@ class _NewProjectModalState extends State<NewProjectModal> {
       // TODO: Implement project creation logic
       Navigator.of(context).pop({
         'name': _projectNameController.text,
-        'description': _descriptionController.text,
-        'privacy': _selectedPrivacy,
+        'slug': _slugController.text,
       });
     }
   }
@@ -115,99 +112,24 @@ class _NewProjectModalState extends State<NewProjectModal> {
           ),
           const SizedBox(height: KSize.md),
           InputField(
-            controller: _descriptionController,
-            label: 'Description',
-            hintText: 'Brief description of your project...',
-            maxLines: 3,
+            controller: _slugController,
+            label: 'Project Slug (Optional)',
+            hintText: 'project-slug',
             validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Description is required';
+              if (value != null && value.trim().isNotEmpty) {
+                final slugRegex = RegExp(r'^[a-z0-9]+(?:-[a-z0-9]+)*$');
+                if (!slugRegex.hasMatch(value.trim())) {
+                  return 'Slug must contain only lowercase letters, numbers, and hyphens';
+                }
               }
               return null;
             },
           ),
-          const SizedBox(height: KSize.md),
-          _buildPrivacyDropdown(),
         ],
       ),
     );
   }
 
-  Widget _buildPrivacyDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Privacy',
-          style: KFonts.labelMedium.copyWith(
-            color: context.colorScheme.secondary,
-          ),
-        ),
-        const SizedBox(height: KSize.xxs),
-        Container(
-          height: KSize.buttonHeightDefault,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F7),
-            borderRadius: BorderRadius.circular(KSize.radiusDefault),
-            border: Border.all(
-              color: const Color(0xFFE5E5E7),
-              width: 1,
-            ),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedPrivacy,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: KSize.sm,
-                vertical: KSize.sm,
-              ),
-            ),
-            style: KFonts.bodyMedium.copyWith(
-              color: Colors.black87,
-            ),
-            dropdownColor: Colors.white,
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.black54,
-            ),
-            items: [
-              DropdownMenuItem(
-                value: 'private',
-                child: Text(
-                  'Private - Only you',
-                  style: KFonts.bodyMedium.copyWith(color: Colors.black87),
-                ),
-              ),
-              DropdownMenuItem(
-                value: 'team',
-                child: Text(
-                  'Team - Invite specific people',
-                  style: KFonts.bodyMedium.copyWith(color: Colors.black87),
-                ),
-              ),
-              DropdownMenuItem(
-                value: 'public',
-                child: Text(
-                  'Public - Everyone can view',
-                  style: KFonts.bodyMedium.copyWith(color: Colors.black87),
-                ),
-              ),
-            ],
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _selectedPrivacy = value;
-                });
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildActions() {
     return Row(

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/authentication/application/authentication_cubit.dart';
+import '../../features/project_selection/application/project_selection_cubit.dart';
 import '../theme/theme_provider.dart';
 
 /// Configuration for all app-level BLoC providers
@@ -25,6 +26,11 @@ class AppBlocProviders {
     // Theme management across the app
     BlocProvider<ThemeCubit>(
       create: (context) => ThemeCubit(),
+    ),
+    
+    // Project selection - Used across app bar, dashboard, and other project-aware screens
+    BlocProvider<ProjectSelectionCubit>(
+      create: (context) => ProjectSelectionCubit()..initialize(),
     ),
     // 
     // User preferences shared across screens:

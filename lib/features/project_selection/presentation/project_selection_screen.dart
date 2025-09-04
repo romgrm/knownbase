@@ -20,10 +20,7 @@ class ProjectSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProjectSelectionCubit()..initialize(),
-      child: const _ProjectSelectionView(),
-    );
+    return const _ProjectSelectionView();
   }
 }
 
@@ -39,7 +36,6 @@ class _ProjectSelectionView extends StatelessWidget {
     );
 
     if (result != null) {
-      // Handle the project creation result
       final projectName = result['name'];
       final slug = result['slug'];
 
@@ -61,7 +57,9 @@ class _ProjectSelectionView extends StatelessWidget {
       body: Column(
         children: [
           const Divider(),
-          const HeaderWidget(),
+          HeaderWidget(
+            onCreateProject: () => _showNewProjectModal(context),
+          ),
           BlocBuilder<ProjectSelectionCubit, ProjectSelectionState>(
             builder: (context, state) {
               if (state.isLoadingProjects) {
@@ -88,8 +86,9 @@ class _ProjectSelectionView extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     child: ProjectListBuilder(
                         projects: state.projects,
-                        selectedProject: state.projects.first,
+                        selectedProject: state.selectedProject,
                         onProjectTap: (project) {
+                          context.read<ProjectSelectionCubit>().selectProject(project);
                           AppRouter.navigateToDashboard(context);
                         })),
               );
@@ -102,7 +101,12 @@ class _ProjectSelectionView extends StatelessWidget {
 }
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key});
+  final VoidCallback onCreateProject;
+  
+  const HeaderWidget({
+    super.key,
+    required this.onCreateProject,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +135,7 @@ class HeaderWidget extends StatelessWidget {
               const SizedBox(width: KSize.xs),
               KButton(
                 text: "Create New Project",
-                onPressed: () => {},
+                onPressed: onCreateProject,
                 variant: KButtonVariant.primary,
                 icon: Icons.add,
               ),

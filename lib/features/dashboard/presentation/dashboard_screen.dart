@@ -7,6 +7,8 @@ import '../../../core/router/app_router.dart';
 import '../../../core/services/app_logger.dart';
 import '../../authentication/application/authentication_cubit.dart';
 import '../../authentication/application/authentication_state.dart';
+import '../../project_selection/application/project_selection_cubit.dart';
+import '../../project_selection/application/project_selection_state.dart';
 
 /// Dashboard screen displayed after successful authentication
 class DashboardScreen extends StatelessWidget {
@@ -14,34 +16,43 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: const KnownBaseAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.grey[50]!,
-              Colors.grey[100]!,
-              Colors.grey[200]!,
-            ],
+    return BlocBuilder<ProjectSelectionCubit, ProjectSelectionState>(
+      builder: (context, state) {
+        final selectedProject = state.selectedProject;
+        return Scaffold(
+          backgroundColor: Colors.grey[50],
+          appBar: KnownBaseAppBar(
+            projectName: selectedProject?.name ?? 'Dashboard',
+            userName: 'John Doe', // TODO: Get from authentication cubit
+            userEmail: 'john@company.com', // TODO: Get from authentication cubit
           ),
-        ),
-        child: SafeArea(
-          child: BlocListener<AuthenticationCubit, AuthenticationState>(
-            listener: (context, state) {
-              // Navigate to authentication when sign-out is successful
-              if (state.isSignOutSuccess) {
-                AppLogger.navigationTo('Authentication');
-                AppRouter.navigateToAuth(context);
-              }
-            },
-            child: const DashboardView(),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.grey[50]!,
+                  Colors.grey[100]!,
+                  Colors.grey[200]!,
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: BlocListener<AuthenticationCubit, AuthenticationState>(
+                listener: (context, state) {
+                  // Navigate to authentication when sign-out is successful
+                  if (state.isSignOutSuccess) {
+                    AppLogger.navigationTo('Authentication');
+                    AppRouter.navigateToAuth(context);
+                  }
+                },
+                child: const DashboardView(),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -93,11 +104,18 @@ class DashboardView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Welcome to KnownBase!',
-                            style: KFonts.titleMedium.copyWith(
-                              color: Colors.black,
-                            ),
+                          BlocBuilder<ProjectSelectionCubit, ProjectSelectionState>(
+                            builder: (context, state) {
+                              final selectedProject = state.selectedProject;
+                              return Text(
+                                selectedProject != null 
+                                    ? 'Welcome to ${selectedProject.name}!'
+                                    : 'Welcome to KnownBase!',
+                                style: KFonts.titleMedium.copyWith(
+                                  color: Colors.black,
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(height: KSize.xxxs),
                           Text(

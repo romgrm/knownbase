@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:knownbase/core/theme/app_theme.dart';
 import '../../core/constants/k_sizes.dart';
 import '../../core/constants/k_fonts.dart';
+import '../../features/project_selection/application/project_selection_cubit.dart';
+import '../../features/project_selection/application/project_selection_state.dart';
 import '../buttons/k_theme_toggle_button.dart';
 
 //TODO: - Implement business logic
@@ -40,9 +43,20 @@ class KnownBaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   const KnownBaseLogo(),
                   const SizedBox(width: KSize.md),
                   Flexible(
-                    child: ProjectInfo(
-                      projectName: projectName,
-                      onTap: onProjectInfoTap,
+                    child: BlocBuilder<ProjectSelectionCubit, ProjectSelectionState>(
+                      builder: (context, state) {
+                        final selectedProject = state.selectedProject;
+                        return ProjectInfo(
+                          projectName: selectedProject?.name ?? projectName,
+                          onTap: onProjectInfoTap ?? () {
+                            // TODO: Show project dropdown with all available projects
+                            // This can now access the cubit directly:
+                            // final cubit = context.read<ProjectSelectionCubit>();
+                            // final projects = cubit.state.projects;
+                            debugPrint('Project pill tapped - can show dropdown with projects');
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],

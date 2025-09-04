@@ -17,7 +17,6 @@ class DuplicateDetector {
     double similarityThreshold = 0.7,
   }) {
     final matches = <DuplicateMatch>[];
-    final titleWords = _extractWords(title);
     
     for (final item in existingItems) {
       final similarity = _calculateSimilarity(
@@ -160,7 +159,7 @@ class DuplicateMatch {
   /// Get human-readable description
   String get description {
     final score = (similarity.overallScore * 100).round();
-    return '${score}% similar to "${item.title}"';
+    return '$score% similar to "${item.title}"';
   }
 }
 

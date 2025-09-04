@@ -17,7 +17,7 @@ class SocialLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("Waiting");
+    return const Text("Waiting");
     // return ActionButton(
     //   label: text,
     //   icon: icon,

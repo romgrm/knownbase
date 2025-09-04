@@ -1,13 +1,8 @@
 import '../domain_models/item_model.dart';
-import 'content_processor.dart';
 
 /// Service for suggesting tags based on content
 class TagSuggester {
-  final ContentProcessor _contentProcessor;
-  
-  const TagSuggester({
-    ContentProcessor? contentProcessor,
-  }) : _contentProcessor = contentProcessor ?? const ContentProcessor();
+  const TagSuggester();
 
   /// Generate tag suggestions based on content
   List<TagSuggestion> suggestTags({
@@ -16,8 +11,6 @@ class TagSuggester {
     required List<ItemModel> existingItems,
     int maxSuggestions = 10,
   }) {
-    final suggestions = <TagSuggestion>[];
-    
     // Extract keywords from title and description
     final contentKeywords = _extractKeywords('$title $description');
     
@@ -256,7 +249,7 @@ class TagSuggestion {
   int get confidencePercentage => (confidence * 100).round();
   
   /// Get display text for UI
-  String get displayText => '$tag (${confidencePercentage}%)';
+  String get displayText => '$tag ($confidencePercentage%)';
 }
 
 /// Sources for tag suggestions

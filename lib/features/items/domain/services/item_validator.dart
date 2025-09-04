@@ -1,4 +1,3 @@
-import '../domain_models/item_model.dart';
 import '../domain_models/item_content_model.dart';
 import '../domain_models/item_error.dart';
 import '../../../../core/utils/result.dart';

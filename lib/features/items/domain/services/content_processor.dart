@@ -34,7 +34,7 @@ class ContentProcessor {
       return '${truncated.substring(0, lastSpaceIndex)}...';
     }
     
-    return '${truncated}...';
+    return '$truncated...';
   }
 
   /// Extract keywords from content for tagging suggestions

@@ -24,7 +24,8 @@ class ProjectDto {
     List<ProjectMemberDto> membersList = [];
     if (json['project_members'] is List) {
       membersList = (json['project_members'] as List)
-          .map((memberJson) => ProjectMemberDto.fromJson(memberJson as Map<String, dynamic>))
+          .map((memberJson) =>
+              ProjectMemberDto.fromJson(memberJson as Map<String, dynamic>))
           .toList();
     }
 
@@ -33,7 +34,7 @@ class ProjectDto {
       name: json['name']?.toString() ?? '',
       slug: json['slug']?.toString() ?? '',
       createdBy: json['created_by']?.toString() ?? '',
-      createdAt: json['created_at'] != null 
+      createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())
           : null,
       members: membersList,
@@ -48,7 +49,9 @@ class ProjectDto {
       slug: project.slug.isEmpty ? project.generateSlug() : project.slug,
       createdBy: project.createdBy,
       createdAt: project.createdAt,
-      members: project.members.map((member) => ProjectMemberDto.fromDomain(member)).toList(),
+      members: project.members
+          .map((member) => ProjectMemberDto.fromDomain(member))
+          .toList(),
     );
   }
 
@@ -72,13 +75,34 @@ class ProjectDto {
   }
 
   /// Convert to domain model
-  ProjectModel toDomain() {
+  /// TODO: create separate method for assign user role + handle role assignment in project creation
+  ProjectModel toDomain({String? currentUserId}) {
+    String userRole = 'member'; // default role
+
+    // If currentUserId is provided, determine the user's role
+    if (currentUserId != null) {
+      // Check if user is the creator/owner
+      if (createdBy == currentUserId) {
+        userRole = 'owner';
+      } else {
+        // Check if user is a member and get their role
+        final memberRole = members
+            .where((member) => member.userId == currentUserId)
+            .firstOrNull
+            ?.role;
+        if (memberRole != null) {
+          userRole = memberRole;
+        }
+      }
+    }
+
     return ProjectModel(
       id: id ?? '',
       name: name,
       slug: slug,
       createdBy: createdBy,
       createdAt: createdAt,
+      userRole: userRole,
       members: members.map((member) => member.toDomain()).toList(),
     );
   }

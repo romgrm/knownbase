@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/authentication/application/authentication_cubit.dart';
+import '../theme/theme_provider.dart';
 
 /// Configuration for all app-level BLoC providers
 /// 
@@ -21,12 +22,10 @@ class AppBlocProviders {
       create: (context) => AuthenticationCubit()..initialize(),
     ),
     
-    // Future shared cubits can be added here:
-    // 
-    // Theme management across the app:
-    // BlocProvider<ThemeCubit>(
-    //   create: (context) => ThemeCubit()..loadTheme(),
-    // ),
+    // Theme management across the app
+    BlocProvider<ThemeCubit>(
+      create: (context) => ThemeCubit(),
+    ),
     // 
     // User preferences shared across screens:
     // BlocProvider<UserPreferencesCubit>(

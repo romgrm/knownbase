@@ -30,28 +30,29 @@ class SupabaseProjectService implements IProjectService {
 
       // Get project IDs where user is a member
       final memberProjectIds = await _getUserProjectIds(user.id);
-      
+
       // Build query based on whether user has member projects
-      final query = _supabase
-          .from('projects')
-          .select('''
+      final query = _supabase.from('projects').select('''
             id, name, slug, created_by, created_at,
             project_members(
               id, project_id, user_id, role, joined_at
             )
           ''');
 
-      final response = memberProjectIds.isNotEmpty 
-          ? await query.or('created_by.eq.${user.id},id.in.(${memberProjectIds.join(',')})')
+      final response = memberProjectIds.isNotEmpty
+          ? await query.or(
+              'created_by.eq.${user.id},id.in.(${memberProjectIds.join(',')})')
           : await query.eq('created_by', user.id);
 
       final List<ProjectModel> projects = [];
       for (final projectData in response as List) {
-        final project = ProjectDto.fromJson(projectData).toDomain();
+        final project =
+            ProjectDto.fromJson(projectData).toDomain(currentUserId: user.id);
         projects.add(project);
       }
 
-      AppLogger.info('PROJECT_FETCH: Successfully fetched ${projects.length} projects');
+      AppLogger.info(
+          'PROJECT_FETCH: Successfully fetched ${projects.length} projects');
       return Result.success(projects);
     } on PostgrestException catch (e) {
       AppLogger.error('PROJECT_FETCH: Supabase error: ${e.message}');
@@ -69,7 +70,7 @@ class SupabaseProjectService implements IProjectService {
           .from('project_members')
           .select('project_id')
           .eq('user_id', userId);
-      
+
       return (memberResponse as List)
           .map((row) => row['project_id'].toString())
           .toList();
@@ -80,7 +81,8 @@ class SupabaseProjectService implements IProjectService {
   }
 
   @override
-  Future<Result<ProjectModel, ProjectError>> getProjectById(String projectId) async {
+  Future<Result<ProjectModel, ProjectError>> getProjectById(
+      String projectId) async {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
@@ -89,20 +91,18 @@ class SupabaseProjectService implements IProjectService {
 
       AppLogger.info('PROJECT_GET_BY_ID: Fetching project $projectId');
 
-      final response = await _supabase
-          .from('projects')
-          .select('''
+      final response = await _supabase.from('projects').select('''
             id, name, slug, created_by, created_at,
             project_members(
               id, project_id, user_id, role, joined_at
             )
-          ''')
-          .eq('id', projectId)
-          .single();
+          ''').eq('id', projectId).single();
 
-      final project = ProjectDto.fromJson(response).toDomain();
+      final project =
+          ProjectDto.fromJson(response).toDomain(currentUserId: user.id);
 
-      AppLogger.info('PROJECT_GET_BY_ID: Successfully fetched project ${project.name}');
+      AppLogger.info(
+          'PROJECT_GET_BY_ID: Successfully fetched project ${project.name}');
       return Result.success(project);
     } on PostgrestException catch (e) {
       AppLogger.error('PROJECT_GET_BY_ID: Supabase error: ${e.message}');
@@ -128,7 +128,8 @@ class SupabaseProjectService implements IProjectService {
         return const Result.failure(ProjectError.authenticationError);
       }
 
-      AppLogger.info('PROJECT_CREATE: Creating project: $name for user: ${user.id}');
+      AppLogger.info(
+          'PROJECT_CREATE: Creating project: $name for user: ${user.id}');
 
       // Step 1: Ensure user exists in public.users table (critical for foreign key)
       try {
@@ -140,15 +141,16 @@ class SupabaseProjectService implements IProjectService {
       }
 
       final generatedSlug = slug ?? _generateSlugFromName(name);
-      
+
       // Step 2: Prepare project data
       final projectData = {
         'name': name.trim(),
         'slug': generatedSlug,
         'created_by': user.id,
       };
-      
-      AppLogger.info('PROJECT_CREATE: Attempting to insert project: $projectData');
+
+      AppLogger.info(
+          'PROJECT_CREATE: Attempting to insert project: $projectData');
 
       // Step 3: Create project with minimal select to avoid complex joins during creation
       final response = await _supabase
@@ -157,38 +159,35 @@ class SupabaseProjectService implements IProjectService {
           .select('id, name, slug, created_by, created_at')
           .single();
 
-      AppLogger.info('PROJECT_CREATE: Project created successfully: ${response['id']}');
+      AppLogger.info(
+          'PROJECT_CREATE: Project created successfully: ${response['id']}');
 
       // Step 4: Add creator as owner member
-      await _supabase
-          .from('project_members')
-          .insert({
-            'project_id': response['id'],
-            'user_id': user.id,
-            'role': 'owner',
-          });
+      await _supabase.from('project_members').insert({
+        'project_id': response['id'],
+        'user_id': user.id,
+        'role': 'owner',
+      });
 
       AppLogger.info('PROJECT_CREATE: Owner membership created');
 
       // Step 5: Fetch complete project data with members
-      final completeProject = await _supabase
-          .from('projects')
-          .select('''
+      final completeProject = await _supabase.from('projects').select('''
             id, name, slug, created_by, created_at,
             project_members(
               id, project_id, user_id, role, joined_at
             )
-          ''')
-          .eq('id', response['id'])
-          .single();
+          ''').eq('id', response['id']).single();
 
-      final createdProject = ProjectDto.fromJson(completeProject).toDomain();
+      final createdProject =
+          ProjectDto.fromJson(completeProject).toDomain(currentUserId: user.id);
 
-      AppLogger.info('PROJECT_CREATE: Successfully created project ${createdProject.name}');
+      AppLogger.info(
+          'PROJECT_CREATE: Successfully created project ${createdProject.name}');
       return Result.success(createdProject);
-      
     } on PostgrestException catch (e) {
-      AppLogger.error('PROJECT_CREATE: PostgrestException: ${e.message}, Code: ${e.code}');
+      AppLogger.error(
+          'PROJECT_CREATE: PostgrestException: ${e.message}, Code: ${e.code}');
       AppLogger.error('PROJECT_CREATE: Full error details: $e');
       return Result.failure(_mapPostgrestExceptionToError(e));
     } catch (e) {
@@ -213,16 +212,14 @@ class SupabaseProjectService implements IProjectService {
         final emailName = (user.email?.split('@').first ?? '');
         final displayName = emailName.isNotEmpty ? emailName : 'User';
         final initials = _generateInitials(displayName);
-        
-        await _supabase
-            .from('users')
-            .insert({
-              'id': user.id,
-              'name': displayName,
-              'initials': initials,
-              'created_at': user.createdAt,
-            });
-        
+
+        await _supabase.from('users').insert({
+          'id': user.id,
+          'name': displayName,
+          'initials': initials,
+          'created_at': user.createdAt,
+        });
+
         AppLogger.info('Successfully created user record for ${user.email}');
       } else {
         AppLogger.info('User record already exists for ${user.email}');
@@ -235,7 +232,8 @@ class SupabaseProjectService implements IProjectService {
   }
 
   @override
-  Future<Result<ProjectModel, ProjectError>> updateProject(ProjectModel project) async {
+  Future<Result<ProjectModel, ProjectError>> updateProject(
+      ProjectModel project) async {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
@@ -253,9 +251,11 @@ class SupabaseProjectService implements IProjectService {
           .select()
           .single();
 
-      final updatedProject = ProjectDto.fromJson(response).toDomain();
+      final updatedProject =
+          ProjectDto.fromJson(response).toDomain(currentUserId: user.id);
 
-      AppLogger.info('PROJECT_UPDATE: Successfully updated project ${updatedProject.name}');
+      AppLogger.info(
+          'PROJECT_UPDATE: Successfully updated project ${updatedProject.name}');
       return Result.success(updatedProject);
     } on PostgrestException catch (e) {
       AppLogger.error('PROJECT_UPDATE: Supabase error: ${e.message}');
@@ -276,10 +276,7 @@ class SupabaseProjectService implements IProjectService {
 
       AppLogger.info('PROJECT_DELETE: Deleting project $projectId');
 
-      await _supabase
-          .from('projects')
-          .delete()
-          .eq('id', projectId);
+      await _supabase.from('projects').delete().eq('id', projectId);
 
       AppLogger.info('PROJECT_DELETE: Successfully deleted project $projectId');
       return const Result.success(null);
@@ -303,14 +300,15 @@ class SupabaseProjectService implements IProjectService {
   /// Helper method to generate initials from a name
   String _generateInitials(String name) {
     if (name.isEmpty) return '';
-    
+
     final words = name.trim().split(RegExp(r'\s+'));
     if (words.isEmpty) return '';
-    
+
     if (words.length == 1) {
       return words.first.substring(0, 1).toUpperCase();
     } else {
-      return (words.first.substring(0, 1) + words.last.substring(0, 1)).toUpperCase();
+      return (words.first.substring(0, 1) + words.last.substring(0, 1))
+          .toUpperCase();
     }
   }
 

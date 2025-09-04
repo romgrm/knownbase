@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:knownbase/core/theme/app_theme.dart';
 import '../../core/constants/k_sizes.dart';
 import '../../core/constants/k_fonts.dart';
+import '../buttons/k_theme_toggle_button.dart';
 
 //TODO: - Implement business logic
 // TODO: - Check responsiveness design
@@ -86,10 +88,7 @@ class KnownBaseLogo extends StatelessWidget {
         ),
         Text(
           'KnownBase',
-          style: KFonts.titleMedium.copyWith(
-            fontWeight: KFonts.semiBold,
-            color: const Color(0xFF101828),
-          ),
+          style: context.textTheme.heading,
         ),
       ],
     );
@@ -111,13 +110,7 @@ class ProjectInfo extends StatelessWidget {
     final Widget info = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'Project:',
-          style: KFonts.bodySmall.copyWith(
-            fontSize: 12.3,
-            color: const Color(0xFF6A7282),
-          ),
-        ),
+        Text('Project:', style: context.textTheme.description),
         const SizedBox(width: KSize.xxs - KSize.xxxs),
         Container(
           padding: const EdgeInsets.symmetric(
@@ -173,6 +166,8 @@ class RightActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const KCompactThemeToggleButton(),
+        const SizedBox(width: KSize.xxs),
         SettingsButton(onTap: onSettingsTap),
         const SizedBox(width: KSize.xxs),
         UserMenu(
@@ -196,11 +191,8 @@ class SettingsButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(6.75),
       child: const Padding(
         padding: EdgeInsets.all(KSize.xxs - 2),
-        child: Icon(
-          Icons.settings_outlined,
-          size: KSize.iconSizeDefault - KSize.xxs,
-          color: Color(0xFF6A7282),
-        ),
+        child: Icon(Icons.settings_outlined,
+            size: KSize.iconSizeDefault - KSize.xxs),
       ),
     );
   }
@@ -251,11 +243,8 @@ class UserMenu extends StatelessWidget {
               ),
             ),
             const SizedBox(width: KSize.xxs),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              size: KSize.iconSizeDefault - KSize.xxs,
-              color: Color(0xFF99A1AF),
-            ),
+            const Icon(Icons.keyboard_arrow_down,
+                size: KSize.iconSizeDefault - KSize.xxs),
           ],
         ),
       ),
@@ -307,24 +296,13 @@ class UserInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
-          child: Text(
-            userName,
-            overflow: TextOverflow.ellipsis,
-            style: KFonts.labelMedium.copyWith(
-              fontWeight: KFonts.medium,
-              color: const Color(0xFF101828),
-            ),
-          ),
+          child: Text(userName,
+              overflow: TextOverflow.ellipsis, style: context.textTheme.text),
         ),
         Flexible(
-          child: Text(
-            userEmail,
-            overflow: TextOverflow.ellipsis,
-            style: KFonts.labelSmall.copyWith(
-              fontWeight: KFonts.medium,
-              color: const Color(0xFF6A7282),
-            ),
-          ),
+          child: Text(userEmail,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.description),
         ),
       ],
     );

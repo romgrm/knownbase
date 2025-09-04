@@ -3,6 +3,8 @@ import '../../features/authentication/domain/i_authentication_service.dart';
 import '../../features/authentication/infrastructure/supabase_authentication_service.dart';
 import '../../features/project_selection/domain/i_project_service.dart';
 import '../../features/project_selection/infrastructure/supabase_project_service.dart';
+import '../../features/items/domain/i_item_service.dart';
+import '../../features/items/infrastructure/supabase_item_service.dart';
 import 'token_storage_service.dart';
 import 'session_management_service.dart';
 
@@ -31,6 +33,11 @@ Future<void> setupDependencies() async {
   // Project service
   getIt.registerLazySingleton<IProjectService>(
     () => SupabaseProjectService(),
+  );
+
+  // Item service
+  getIt.registerLazySingleton<IItemService>(
+    () => SupabaseItemService(),
   );
 }
 

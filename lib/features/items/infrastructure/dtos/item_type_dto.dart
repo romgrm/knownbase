@@ -1,24 +1,21 @@
-import '../domain/item_tag_model.dart';
+import '../../domain/domain_models/item_type_model.dart';
 
-/// Data Transfer Object for ItemTag data from/to Supabase
-class ItemTagDto {
-  const ItemTagDto({
+/// Data Transfer Object for ItemType data from/to Supabase
+class ItemTypeDto {
+  const ItemTypeDto({
     this.id,
-    this.itemId = '',
     this.name = '',
     this.createdAt,
   });
 
   final String? id;
-  final String itemId;
   final String name;
   final DateTime? createdAt;
 
-  /// Create ItemTagDto from JSON response
-  factory ItemTagDto.fromJson(Map<String, dynamic> json) {
-    return ItemTagDto(
+  /// Create ItemTypeDto from JSON response
+  factory ItemTypeDto.fromJson(Map<String, dynamic> json) {
+    return ItemTypeDto(
       id: json['id']?.toString(),
-      itemId: json['item_id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       createdAt: json['created_at'] != null 
           ? DateTime.tryParse(json['created_at'].toString())
@@ -26,20 +23,18 @@ class ItemTagDto {
     );
   }
 
-  /// Create ItemTagDto from domain model
-  factory ItemTagDto.fromDomain(ItemTagModel tag) {
-    return ItemTagDto(
-      id: tag.id.isEmpty ? null : tag.id,
-      itemId: tag.itemId,
-      name: tag.name,
-      createdAt: tag.createdAt,
+  /// Create ItemTypeDto from domain model
+  factory ItemTypeDto.fromDomain(ItemTypeModel itemType) {
+    return ItemTypeDto(
+      id: itemType.id.isEmpty ? null : itemType.id,
+      name: itemType.name,
+      createdAt: itemType.createdAt,
     );
   }
 
   /// Convert to JSON for Supabase operations
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = {
-      'item_id': itemId,
       'name': name,
     };
 
@@ -55,10 +50,9 @@ class ItemTagDto {
   }
 
   /// Convert to domain model
-  ItemTagModel toDomain() {
-    return ItemTagModel(
+  ItemTypeModel toDomain() {
+    return ItemTypeModel(
       id: id ?? '',
-      itemId: itemId,
       name: name,
       createdAt: createdAt,
     );

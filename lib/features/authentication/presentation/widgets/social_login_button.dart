@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/buttons/action_button.dart';
 
 /// Social login button widget
 class SocialLoginButton extends StatelessWidget {
@@ -18,12 +17,13 @@ class SocialLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionButton(
-      label: text,
-      icon: icon,
-      onPressed: onPressed ?? () {},
-      isLoading: isLoading,
-      height: 48,
-    );
+    return Text("Waiting");
+    // return ActionButton(
+    //   label: text,
+    //   icon: icon,
+    //   onPressed: onPressed ?? () {},
+    //   isLoading: isLoading,
+    //   height: 48,
+    // );
   }
 }

@@ -44,7 +44,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error loading items for project $projectId', e);
-      return Result.failure(const ItemNetworkError('Failed to load items'));
+      return const Result.failure( ItemNetworkError('Failed to load items'));
     }
   }
 
@@ -59,7 +59,7 @@ class SupabaseItemService implements IItemService {
           .eq('id', itemId)
           .single();
 
-      final item = ItemDto.fromJson(response as Map<String, dynamic>).toDomain();
+      final item = ItemDto.fromJson(response).toDomain();
 
       AppLogger.info('ITEM_SERVICE: Successfully loaded item $itemId');
       return Result.success(item);
@@ -72,7 +72,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error loading item $itemId', e);
-      return Result.failure(const ItemNetworkError('Failed to load item'));
+      return const Result.failure( ItemNetworkError('Failed to load item'));
     }
   }
 
@@ -106,7 +106,7 @@ class SupabaseItemService implements IItemService {
 
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        return Result.failure(const ItemPermissionError('User not authenticated'));
+        return const Result.failure( ItemPermissionError('User not authenticated'));
       }
 
       AppLogger.info('ITEM_SERVICE: Creating item "$title" in project $projectId');
@@ -129,7 +129,7 @@ class SupabaseItemService implements IItemService {
           .select()
           .single();
 
-      final createdItem = ItemDto.fromJson(response as Map<String, dynamic>).toDomain();
+      final createdItem = ItemDto.fromJson(response).toDomain();
 
       AppLogger.info('ITEM_SERVICE: Successfully created item ${createdItem.id}');
       return Result.success(createdItem);
@@ -146,7 +146,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error creating item', e);
-      return Result.failure(const ItemNetworkError('Failed to create item'));
+      return const Result.failure( ItemNetworkError('Failed to create item'));
     }
   }
 
@@ -209,7 +209,7 @@ class SupabaseItemService implements IItemService {
           .select()
           .single();
 
-      final updatedItem = ItemDto.fromJson(response as Map<String, dynamic>).toDomain();
+      final updatedItem = ItemDto.fromJson(response).toDomain();
 
       AppLogger.info('ITEM_SERVICE: Successfully updated item $itemId');
       return Result.success(updatedItem);
@@ -221,7 +221,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error updating item $itemId', e);
-      return Result.failure(const ItemNetworkError('Failed to update item'));
+      return const Result.failure( ItemNetworkError('Failed to update item'));
     }
   }
 
@@ -242,7 +242,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error deleting item $itemId', e);
-      return Result.failure(const ItemNetworkError('Failed to delete item'));
+      return const Result.failure( ItemNetworkError('Failed to delete item'));
     }
   }
 
@@ -311,7 +311,7 @@ class SupabaseItemService implements IItemService {
       return Result.failure(ItemServerError('Database error: ${e.message}'));
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Unexpected error searching items', e);
-      return Result.failure(const ItemNetworkError('Failed to search items'));
+      return const Result.failure( ItemNetworkError('Failed to search items'));
     }
   }
 
@@ -399,7 +399,7 @@ class SupabaseItemService implements IItemService {
       return Result.success(items);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error loading recent items', e);
-      return Result.failure(const ItemNetworkError('Failed to load recent items'));
+      return const Result.failure( ItemNetworkError('Failed to load recent items'));
     }
   }
 
@@ -425,7 +425,7 @@ class SupabaseItemService implements IItemService {
       return Result.success(items);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error loading popular items', e);
-      return Result.failure(const ItemNetworkError('Failed to load popular items'));
+      return const Result.failure( ItemNetworkError('Failed to load popular items'));
     }
   }
 
@@ -453,7 +453,7 @@ class SupabaseItemService implements IItemService {
       return Result.success(items);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error loading items by author', e);
-      return Result.failure(const ItemNetworkError('Failed to load items by author'));
+      return const Result.failure( ItemNetworkError('Failed to load items by author'));
     }
   }
 
@@ -464,7 +464,7 @@ class SupabaseItemService implements IItemService {
       return const Result.success(null);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error incrementing view count', e);
-      return Result.failure(const ItemNetworkError('Failed to update view count'));
+      return const Result.failure( ItemNetworkError('Failed to update view count'));
     }
   }
 
@@ -473,7 +473,7 @@ class SupabaseItemService implements IItemService {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        return Result.failure(const ItemPermissionError('User not authenticated'));
+        return const Result.failure( ItemPermissionError('User not authenticated'));
       }
 
       // Use RPC function for atomic vote operation
@@ -486,7 +486,7 @@ class SupabaseItemService implements IItemService {
       return const Result.success(null);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error voting on item', e);
-      return Result.failure(const ItemNetworkError('Failed to vote on item'));
+      return const Result.failure( ItemNetworkError('Failed to vote on item'));
     }
   }
 
@@ -495,7 +495,7 @@ class SupabaseItemService implements IItemService {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        return Result.failure(const ItemPermissionError('User not authenticated'));
+        return const Result.failure( ItemPermissionError('User not authenticated'));
       }
 
       await _supabase
@@ -507,7 +507,7 @@ class SupabaseItemService implements IItemService {
       return const Result.success(null);
     } catch (e) {
       AppLogger.error('ITEM_SERVICE: Error removing vote', e);
-      return Result.failure(const ItemNetworkError('Failed to remove vote'));
+      return const Result.failure( ItemNetworkError('Failed to remove vote'));
     }
   }
 
@@ -515,7 +515,7 @@ class SupabaseItemService implements IItemService {
   @override
   Future<Result<ItemStatistics, ItemError>> getProjectItemStatistics(String projectId) async {
     // TODO: Implement with proper SQL aggregation queries
-    return Result.failure(const ItemNetworkError('Not implemented yet'));
+    return const Result.failure( ItemNetworkError('Not implemented yet'));
   }
 
   @override
@@ -536,7 +536,7 @@ class SupabaseItemService implements IItemService {
     List<String>? removeTags,
   }) async {
     // TODO: Implement bulk operations
-    return Result.failure(const ItemNetworkError('Not implemented yet'));
+    return const Result.failure( ItemNetworkError('Not implemented yet'));
   }
 
   @override

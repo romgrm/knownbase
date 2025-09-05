@@ -20,7 +20,6 @@ class DashboardScreen extends StatelessWidget {
       builder: (context, state) {
         final selectedProject = state.selectedProject;
         return Scaffold(
-          // backgroundColor: Colors.grey[50],
           appBar: KnownBaseAppBar(
             projectName: selectedProject?.name ?? 'Dashboard',
             userName: 'John Doe', // TODO: Get from authentication cubit
